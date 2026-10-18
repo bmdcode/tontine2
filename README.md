@@ -16,3 +16,11 @@ Toutes les autres fonctions sont celles de la v6 : formules de parts, tirage au 
 4. Adresse : `https://bmdcode.github.io/tontine2/`
 
 Les données restent dans l'appareil. Ne publiez jamais de fichier de sauvegarde `.json` dans le dépôt.
+
+## Synchronisation en ligne (Firebase)
+- Projet Firebase : `tontine2-fc8f9` (configuration dans `docs/js/firebase-config.js`).
+- Chaque responsable se connecte avec son e-mail. Les comptes sont créés dans Firebase → Authentication → Utilisateurs.
+- Chaque membre, groupe, part, cotisation, remise ou observation est un enregistrement séparé : les saisies de plusieurs appareils se complètent.
+- Hors ligne, les saisies attendent et partent au retour du réseau. L'indicateur en haut affiche l'état (☁ Synchronisé / ⏳ Envoi / 📴 Hors ligne).
+- Règles de sécurité : copier `firestore.rules` dans Firestore → Règles → Publier.
+- « Continuer sans connexion » garde le fonctionnement local de la version précédente.

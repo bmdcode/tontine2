@@ -22,7 +22,8 @@
     }
   }
   var CLE_MODIFS = 'tontine2.modifs_depuis_envoi', CLE_COPIE_JOUR = 'tontine2.copie_du_jour';
-  function enregistrer(d) {
+  function enregistrer(d, depuisReseau) {
+    if (!depuisReseau && window.TontineSync) TontineSync.pousser(d);
     try {
       localStorage.setItem(CLE, JSON.stringify(d));
       localStorage.setItem(CLE_MODIFS, String((Number(localStorage.getItem(CLE_MODIFS)) || 0) + 1));
@@ -724,7 +725,7 @@
       '<button class="btn plein">Enregistrer</button></div></form>' +
       '<div class="carte"><div class="carte-tete"><h3>Sauvegarde des données</h3></div><div class="carte-corps">' +
       '<p class="aide" style="margin-top:0">Les données restent dans ce navigateur, sur cet appareil. Envoyez une sauvegarde après chaque séance vers votre compte de sauvegarde.</p>' +
-      carteCompte() +
+      carteCompte() + (window.TontineSync ? TontineSync.carte() : '') +
       '<p>' + (der ? 'Dernier envoi : <strong>' + new Date(Number(der)).toLocaleString('fr-FR') + '</strong>' : '<strong style="color:var(--rouge)">Aucune sauvegarde envoyée.</strong>') +
       ' · ' + modifsDepuisEnvoi() + ' modification(s) depuis.</p>' +
       '<div class="ligne-champs"><button class="btn plein fixe" data-action="envoyer-sauvegarde">📤 Envoyer la sauvegarde</button>' +
@@ -1121,6 +1122,25 @@
   var VUES = { tableau: vueTableau, membres: vueMembres, dossier: vueDossier, groupes: vueGroupes, paiements: vuePaiements, rapports: vueRapports, affiches: vueAffiches, parametres: vueParametres };
 
   function vueCourante() { var v = location.hash.slice(1); return VUES[v] ? v : 'tableau'; }
+
+  /* ---------- pont avec la synchronisation (sync.js) ---------- */
+  window.TontineApp = {
+    donnees: function () { return T.d; },
+    /** Données reçues d'un autre appareil : enregistre sans renvoyer, puis redessine si personne n'est en train de saisir */
+    recues: function (d, remplacer) {
+      if (remplacer) { copie('Avant chargement des données en ligne'); T = new C.Tontine(C.Tontine.valider(d), enregistrer); }
+      enregistrer(T.d, true);
+      rendreQuandLibre();
+    },
+    copie: copie, toast: toast, rendre: function () { rendre(); }
+  };
+  var attenteRendu = null;
+  function rendreQuandLibre() {
+    clearTimeout(attenteRendu);
+    var a = document.activeElement;
+    if (a && a.closest && a.closest('#vue form') && /INPUT|TEXTAREA|SELECT/.test(a.tagName)) { attenteRendu = setTimeout(rendreQuandLibre, 1500); return; }
+    rendre();
+  }
 
   function rendre() {
     var v = vueCourante();

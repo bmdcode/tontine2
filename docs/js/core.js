@@ -136,7 +136,14 @@
     this.sauvegarder = sauvegarder || function () {};
   }
 
-  Tontine.prototype._id = function (table) { this.d.seq[table] += 1; return this.d.seq[table]; };
+  /* Identifiants : simples compteurs en local ; uniques entre appareils quand la synchronisation est active
+   * (deux téléphones hors ligne ne peuvent pas créer le même n°). */
+  var dernierUid = 0;
+  function uid() { var n = Date.now() * 1000 + Math.floor(Math.random() * 1000); if (n <= dernierUid) n = dernierUid + 1; dernierUid = n; return n; }
+  Tontine.prototype._id = function (table) {
+    if (Tontine.idsUniques) { var n = uid(); this.d.seq[table] = Math.max(this.d.seq[table], n); return n; }
+    this.d.seq[table] += 1; return this.d.seq[table];
+  };
   Tontine.prototype._commit = function () { this.sauvegarder(this.d); };
 
   /* ---------- paramètres ---------- */

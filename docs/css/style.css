@@ -225,3 +225,14 @@ tr.cliquable { cursor: pointer; }
 }
 
 tr.edition td { background: #fffbea; border-bottom: 2px solid #f0dc95; }
+
+/* ---------- synchronisation (Tontine 2.0) ---------- */
+.badge-synchro { margin-left: 8px; border: 0; border-radius: 999px; padding: 3px 10px; font: inherit; font-size: .8rem; cursor: pointer; background: #e5e7e6; color: #333; }
+.badge-synchro[data-couleur="vert"] { background: #d7f0df; color: #14532d; }
+.badge-synchro[data-couleur="orange"] { background: #fdebc8; color: #7a4a00; }
+.badge-synchro[data-couleur="rouge"] { background: #fbd5d5; color: #8a1c1c; }
+.voile-connexion { position: fixed; inset: 0; background: rgba(15, 30, 25, .55); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
+.boite-connexion { background: #fff; border-radius: 14px; padding: 20px; width: 100%; max-width: 360px; display: flex; flex-direction: column; gap: 8px; }
+.boite-connexion h2 { margin: 0; }
+.boite-connexion input { width: 100%; }
+.erreur-connexion { color: #8a1c1c; margin: 0; }
